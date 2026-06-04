@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+{% block page_title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="hero">
+<h2>Welcome {{student.fname}} {{student.lname}} 👋<p>{% if time < 12 %}
+    Good Morning
+{% elif time < 17 %}
+    Good Afternoon
+{% else %}
+    Good Evening
+{% endif %}</p></h2>
+<p>Manage your academics, exams, results and courses here.</p>
+</div>
+
+<div class="grid">
+
+
+
+<div class="card">
+<h3>Current Courses</h3>
+<p>View enrolled subjects</p>
+<a class="btn" href="/student/courses">View</a>
+</div>
+
+
+
+<div class="card">
+<h3>Results</h3>
+<p>Check your marks</p>
+<a class="btn" href="/student/results">View Result</a>
+</div>
+
+<div class="card">
+<h3>Assignments</h3>
+<p>Submit & track assignments</p>
+<a class="btn" href="/student/assignments">Open</a>
+</div>
+
+<div class="card">
+<h3>Notes</h3>
+<p>Download study material</p>
+<a class="btn" href="/student/notes">
+Open
+</a>
+</div>
+
+<div class="card">
+<h3>Attendance</h3>
+<p>View attendance status</p>
+<a class="btn" href="/student/attendance">
+View
+</a>
+</div>
+
+<div class="card">
+<h3>Notices</h3>
+<p>Latest updates</p>
+<a class="btn" href="/student/notices">View</a>
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Department Report
+{% endblock %}
+
+{% block content %}
+
+<div class="grid">
+
+<div class="card">
+<h2>{{total_students}}</h2>
+<p>Total Students</p>
+</div>
+
+<div class="card">
+<h2>{{total_teachers}}</h2>
+<p>Total Teachers</p>
+</div>
+
+<div class="card">
+<h2>{{total_staff}}</h2>
+<p>Total Staff</p>
+</div>
+
+<div class="card">
+<h2>{{total_subjects}}</h2>
+<p>Total Subjects</p>
+</div>
+
+</div>
+
+{% endblock %}

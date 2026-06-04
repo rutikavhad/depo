@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+My Subjects
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<table width="100%">
+<tr>
+<th>Code</th>
+<th>Subject</th>
+<th>Year</th>
+</tr>
+
+{% for s in subjects %}
+<tr>
+<td>{{s.subject_code}}</td>
+<td>{{s.subject_name}}</td>
+<td>{{s.year}}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

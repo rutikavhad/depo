@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+{% block page_title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="hero">
+<h2>Welcome {{s.fname}} {{s.lname}} 👨‍🏫<p>{% if time < 12 %}
+    Good Morning
+{% elif time < 17 %}
+    Good Afternoon
+{% else %}
+    Good Evening
+{% endif %}</p></h2>
+<p>Manage students, assignments, exams and academic work.</p>
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h3>Students</h3>
+<p>View all students</p>
+<a class="btn" href="/teacher/students">Open</a>
+</div>
+
+<div class="card">
+<h3>Assignments</h3>
+<p>Create assignments</p>
+<a class="btn" href="/teacher/assignments">Create</a>
+</div>
+
+<div class="card">
+<h3>Upload Notes</h3>
+<p>Share study material</p>
+<a class="btn" href="/teacher/notes">Upload</a>
+</div>
+
+<div class="card">
+<h3>Marks</h3>
+<p>Enter student marks</p>
+<a class="btn" href="/teacher/marks">Manage</a>
+</div>
+
+<div class="card">
+<h3>Attendance</h3>
+<p>Mark attendance</p>
+<a class="btn" href="/teacher/attendance">Open</a>
+</div>
+
+<div class="card">
+<h3>Assignment Submissions</h3>
+<p>Check student submissions</p>
+<a class="btn" href="/teacher/submissions">
+Open</a>
+</div>
+
+<div class="card">
+<h3>Notices</h3>
+<p>Post announcements</p>
+<a class="btn" href="/teacher/notices">Post</a>
+</div>
+
+</div>
+
+{% endblock %}

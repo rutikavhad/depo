@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Results
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Academic Results</h2>
+
+<div class="card">
+
+<h3>Total Subjects : {{ results|length }}</h3>
+
+<h3>
+Average Marks :
+{{
+(
+results|sum(attribute='marks')
+/
+results|length
+)|round(2)
+if results else 0
+}}
+%
+</h3>
+
+</div>
+
+<br>
+<table width="100%">
+
+<tr>
+    <th>Subject</th>
+    <th>Marks</th>
+    <th>Grade</th>
+    <th>Semester</th>
+</tr>
+
+{% for r in results %}
+
+<tr>
+
+    <td>
+        {{ subject_map.get(r.subject_id,"Unknown Subject") }}
+    </td>
+
+    <td>{{r.marks}}</td>
+
+    <td>{{r.grade}}</td>
+
+    <td>{{r.semester}}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

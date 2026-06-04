@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Assignments
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<table width="100%">
+
+<tr>
+<th>Title</th>
+<th>Due Date</th>
+<th>Status</th>
+<th>Marks</th>
+<th>Action</th>
+</tr>
+
+{% for a in assignments %}
+
+<tr>
+
+<td>{{a.title}}</td>
+
+<td>{{a.due_date}}</td>
+
+{% if a.id in submission_map %}
+
+<td>Submitted</td>
+
+<td>
+
+{{ submission_map[a.id].marks
+if submission_map[a.id].marks
+else "Pending" }}
+
+</td>
+
+<td>
+
+Submitted
+
+</td>
+
+{% else %}
+
+<td>Not Submitted</td>
+
+<td>-</td>
+
+<td>
+
+<a class="btn"
+href="/student/submit-assignment/{{a.id}}">
+
+Submit
+
+</a>
+
+</td>
+
+{% endif %}
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Students
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<table width="100%">
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Course</th>
+<th>Year</th>
+</tr>
+
+{% for s in students %}
+<tr>
+<td>{{s.fname}} {{s.lname}}</td>
+<td>{{s.email}}</td>
+<td>{{s.phone}}</td>
+<td>{{s.cource}}</td>
+<td>{{s.year}}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Course Management
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Subject List</h2>
+
+<table width="100%">
+<tr>
+    <th>ID</th>
+    <th>Code</th>
+    <th>Subject</th>
+    <th>Course</th>
+    <th>Year</th>
+    <th>Teacher</th>
+    <th>Action</th>
+</tr>
+
+{% for s in subjects %}
+<tr>
+    <td>{{s.id}}</td>
+    <td>{{s.subject_code}}</td>
+    <td>{{s.subject_name}}</td>
+    <td>{{s.course}}</td>
+    <td>{{s.year}}</td>
+    <td>{{ teacher_map.get(s.teacher_id, "Not Assigned") }}</td>
+
+    <td>
+        <a class="btn"
+           href="{{ url_for('delete_course', id=s.id) }}"
+           onclick="return confirm('Delete this subject?')">
+           Delete
+        </a>
+    </td>
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<hr>
+<br>
+
+<h2>Add New Subject</h2>
+
+<form method="POST">
+
+    <label>Subject Name</label><br>
+    <input type="text"
+           name="subject_name"
+           placeholder="Database Management System"
+           required>
+    <br><br>
+
+    <label>Subject Code</label><br>
+    <input type="text"
+           name="subject_code"
+           placeholder="DBMS101"
+           required>
+    <br><br>
+
+    <label>Course</label><br>
+    <input type="text"
+           name="course"
+           placeholder="MSC"
+           required>
+    <br><br>
+
+    <label>Year</label><br>
+    <input type="text"
+           name="year"
+           placeholder="FY"
+           required>
+    <br><br>
+
+<label>Assign Teacher</label><br>
+
+<select name="teacher_id" required>
+
+    <option value="">
+        Select Teacher
+    </option>
+
+    {% for t in teachers %}
+
+    <option value="{{t.id}}">
+        {{t.fname}} {{t.lname}} (ID: {{t.id}})
+    </option>
+
+    {% endfor %}
+
+</select>
+
+<br><br>
+
+    <button type="submit" class="btn">
+        Add Subject
+    </button>
+
+</form>
+
+</div>
+
+{% endblock %}1

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+    <h2>Edit Profile</h2>
+
+    <form method="POST">
+
+        <!-- COMMON FIELDS -->
+       <label>First Name</label>
+       <input type="text" name="fname"
+              value="{{ student.fname if student else teacher.fname if teacher else staff.fname }}"
+              placeholder="First Name">
+
+       <label>Last Name</label>
+       <input type="text" name="lname"
+              value="{{ student.lname if student else teacher.lname if teacher else staff.lname }}"
+              placeholder="Last Name">
+
+       <label>Phone</label>
+       <input type="text" name="phone"
+              value="{{ student.phone if student else teacher.phone if teacher else staff.phone }}"
+              placeholder="Phone Number">
+
+        <hr>
+
+        <!-- STUDENT -->
+        {% if student %}
+        <h3>Student Info</h3>
+
+        <label>Year</label>
+        <input type="text" name="year" value="{{ student.year }}">
+
+        <label>Course</label>
+        <input type="text" name="cource" value="{{ student.cource }}">
+        {% endif %}
+
+        <!-- TEACHER -->
+        {% if teacher %}
+        <h3>Teacher Info</h3>
+
+        <label>Department</label>
+        <input type="text" name="department" value="{{ teacher.department }}">
+        {% endif %}
+
+        <!-- STAFF -->
+        {% if staff %}
+        <h3>Staff Info</h3>
+
+        <label>Designation</label>
+        <input type="text" name="designation" value="{{ staff.designation }}">
+        {% endif %}
+
+        <button class="btn" type="submit">Save</button>
+
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Notices
+{% endblock %}
+
+{% block content %}
+
+{% for n in notices %}
+
+<div class="card">
+<h3>{{n.title}}</h3>
+<p>{{n.description}}</p>
+</div>
+
+<br>
+
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends 'base_.html' %}
+
+{% block title %}
+    <title>Student Login</title>
+{% endblock title %}
+    
+
+
+
+{% block content %}    
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb);
+}
+
+.login-container{
+    align-item:center;
+    justify-self: center;
+    display:flex;          /* not flax */
+    flex-direction:column; /* optional, for form layout */
+    width:400px;
+    padding:40px;
+    background:rgba(255,255,255,0.1);
+    border-radius:20px;
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.2);
+    box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo h1{
+    color:#fff;
+    font-size:28px;
+}
+
+.logo p{
+    color:#dbeafe;
+    margin-top:5px;
+}
+
+.input-group{
+    margin-bottom:20px;
+}
+
+.input-group label{
+    display:block;
+    color:#fff;
+    margin-bottom:8px;
+    font-weight:500;
+}
+
+.input-group input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    outline:none;
+    font-size:16px;
+    background:rgba(255,255,255,0.15);
+    color:white;
+}
+
+.input-group input::placeholder{
+    color:#d1d5db;
+}
+
+.options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    color:white;
+    font-size:14px;
+}
+
+.options a{
+    color:#93c5fd;
+    text-decoration:none;
+}
+
+.options a:hover{
+    text-decoration:underline;
+}
+
+.login-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#3b82f6;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.login-btn:hover{
+    background:#2563eb;
+}
+
+.footer-text{
+    text-align:center;
+    color:white;
+    margin-top:20px;
+    font-size:14px;
+}
+
+.footer-text a{
+    color:#93c5fd;
+    text-decoration:none;
+}
+
+.footer-text a:hover{
+    text-decoration:underline;
+}
+
+@media(max-width:450px){
+    .login-container{
+        width:90%;
+        padding:30px;
+    }
+}
+</style>
+
+
+<body>
+
+<div class="login-container">
+
+    <div class="logo">
+        <h1>Computer Science Department</h1>
+        <p>Student & Faculty Portal</p>
+    </div>
+
+    <form action="/login" method="POST">
+        <select name="role">
+        <option value="">Select Role</option>
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+        <option value="staff">Staff</option>
+    </select>
+        <div class="input-group">
+            <label>Email ID</label>
+            <input type="email" placeholder="Enter your email" name="email" required>
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" placeholder="Enter your password" name="password" required>
+        </div>
+
+        <div class="options">
+            <label>
+                <input type="checkbox">
+                Remember Me
+            </label>
+        </div>
+
+        <button type="submit" class="login-btn">
+            Login
+        </button>
+    </form>
+
+
+</div>
+</body>
+{% endblock content %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Attendance
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<table width="100%">
+<tr>
+<th>Date</th>
+<th>Status</th>
+</tr>
+
+{% for a in attendance %}
+<tr>
+<td>{{a.attendance_date}}</td>
+<td>{{a.status}}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

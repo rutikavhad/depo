@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Dashboard{% endblock %}
+{% block page_title %}Administrative Panel 🏢{% endblock %}
+
+{% block content %}
+
+<div class="hero">
+<h2>Wellcome {{tea.fname}} {{tea.lname}} <p>{% if time < 12 %}
+    Good Morning
+{% elif time < 17 %}
+    Good Afternoon
+{% else %}
+    Good Evening
+{% endif %}</p></h2>
+<p>Manage department operations and records.</p>
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h3>Students Records</h3>
+<a class="btn" href="/staff/students">Manage</a>
+</div>
+
+<div class="card">
+<h3>Teachers Records</h3>
+<a class="btn" href="/staff/teachers">Manage</a>
+</div>
+
+<div class="card">
+<h3>Courses</h3>
+<a class="btn" href="/staff/courses">Manage</a>
+</div>
+
+
+
+
+
+<div class="card">
+<h3>Reports</h3>
+<a class="btn" href="/staff/reports">Generate</a>
+</div>
+
+<div class="card">
+<h3>Notices</h3>
+<a class="btn" href="/staff/notices">Post</a>
+</div>
+
+</div>
+
+{% endblock %}

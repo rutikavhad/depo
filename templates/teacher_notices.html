@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Teacher Notices
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Notice List</h2>
+
+<table width="100%">
+<tr>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Created By</th>
+    <th>Action</th>
+</tr>
+
+{% for n in notices %}
+
+<tr>
+
+    <td>{{n.id}}</td>
+
+    <td>{{n.title}}</td>
+
+    <td>{{n.description}}</td>
+
+    <td>{{n.creator_role}}</td>
+
+    <td>
+        <a class="btn"
+           href="{{ url_for('teacher_delete_notice', id=n.id) }}"
+           onclick="return confirm('Delete Notice?')">
+            Delete
+        </a>
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+<hr>
+<br>
+
+<h2>Add New Notice</h2>
+
+<form method="POST">
+
+<label>Notice Title</label><br>
+
+<input type="text"
+       name="title"
+       placeholder="Enter Notice Title"
+       required>
+
+<br><br>
+
+<label>Description</label><br>
+
+<textarea
+    name="description"
+    rows="5"
+    cols="60"
+    placeholder="Enter Notice Description"
+    required></textarea>
+
+<br><br>
+
+<button class="btn" type="submit">
+    Add Notice
+</button>
+
+</form>
+
+</div>
+
+{% endblock %}

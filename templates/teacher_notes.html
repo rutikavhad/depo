@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Notes
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Uploaded Notes</h2>
+
+<table width="100%">
+<tr>
+<th>Title</th>
+<th>File</th>
+<th>Action</th>
+</tr>
+
+{% for n in notes %}
+
+<tr>
+
+<td>{{n.title}}</td>
+
+<td>
+<a href="{{ url_for('static', filename=n.file_path) }}"
+   target="_blank">
+View File
+</a>
+</td>
+
+<td>
+<a class="btn"
+href="{{ url_for('delete_note', id=n.id) }}">
+Delete
+</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+<hr>
+<br>
+
+<h2>Upload New Notes</h2>
+
+<form method="POST"
+      enctype="multipart/form-data">
+
+<label>Title</label><br>
+
+<input type="text"
+       name="title"
+       required>
+
+<br><br>
+
+<label>Subject</label><br>
+
+<select name="subject_id" required>
+
+{% for s in subjects %}
+
+<option value="{{s.id}}">
+{{s.subject_name}}
+</option>
+
+{% endfor %}
+
+</select>
+
+<br><br>
+
+<label>PDF File</label><br>
+
+<input type="file"
+       name="note_file"
+       accept=".pdf"
+       required>
+
+<br><br>
+
+<button class="btn">
+Upload Notes
+</button>
+
+</form>
+
+</div>
+
+{% endblock %}

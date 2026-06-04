@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Assignments
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Assignment List</h2>
+
+<table width="100%">
+<tr>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Due Date</th>
+    <th>Action</th>
+</tr>
+
+{% for a in assignments %}
+<tr>
+
+    <td>{{a.id}}</td>
+    <td>{{a.title}}</td>
+    <td>{{a.description}}</td>
+    <td>{{a.due_date}}</td>
+
+    <td>
+        <a class="btn"
+           href="{{ url_for('delete_assignment', id=a.id) }}"
+           onclick="return confirm('Delete Assignment?')">
+           Delete
+        </a>
+    </td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<hr>
+<br>
+
+<h2>Add New Assignment</h2>
+
+<form method="POST">
+
+    <label>Title</label><br>
+    <input type="text"
+           name="title"
+           required>
+    <br><br>
+
+    <label>Description</label><br>
+    <textarea
+        name="description"
+        rows="4"
+        cols="50"
+        required></textarea>
+    <br><br>
+
+    <label>Subject</label><br>
+
+    <select name="subject_id" required>
+
+        <option value="">
+            Select Subject
+        </option>
+
+        {% for s in subjects %}
+
+        <option value="{{s.id}}">
+            {{s.subject_name}}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Due Date</label><br>
+
+    <input type="date"
+           name="due_date"
+           required>
+
+    <br><br>
+
+    <button class="btn" type="submit">
+        Add Assignment
+    </button>
+
+</form>
+
+</div>
+
+{% endblock %}
