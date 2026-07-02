@@ -2,59 +2,121 @@
 
 {% block content %}
 
-<div class="card">
-    <h2>Edit Profile</h2>
+<div class="profile-container">
 
-    <form method="POST">
 
-        <!-- COMMON FIELDS -->
-       <label>First Name</label>
-       <input type="text" name="fname"
-              value="{{ student.fname if student else teacher.fname if teacher else staff.fname }}"
-              placeholder="First Name">
+  {% if role == 'teacher' %}
 
-       <label>Last Name</label>
-       <input type="text" name="lname"
-              value="{{ student.lname if student else teacher.lname if teacher else staff.lname }}"
-              placeholder="Last Name">
+<div class="subject-card">
 
-       <label>Phone</label>
-       <input type="text" name="phone"
-              value="{{ student.phone if student else teacher.phone if teacher else staff.phone }}"
-              placeholder="Phone Number">
+    <h3>Allocated Subjects</h3>
 
-        <hr>
+    {% if teacher_subjects %}
 
-        <!-- STUDENT -->
-        {% if student %}
-        <h3>Student Info</h3>
+        <ul>
+            {% for subject in teacher_subjects %}
+                <li>
+                    {{ subject.subject_name }}
+                    ({{ subject.subject_code }})
+                </li>
+            {% endfor %}
+        </ul>
 
-        <label>Year</label>
-        <input type="text" name="year" value="{{ student.year }}">
+    {% else %}
 
-        <label>Course</label>
-        <input type="text" name="cource" value="{{ student.cource }}">
-        {% endif %}
+        <p>No subjects assigned.</p>
 
-        <!-- TEACHER -->
-        {% if teacher %}
-        <h3>Teacher Info</h3>
+    {% endif %}
 
-        <label>Department</label>
-        <input type="text" name="department" value="{{ teacher.department }}">
-        {% endif %}
+</div>
 
-        <!-- STAFF -->
-        {% if staff %}
-        <h3>Staff Info</h3>
+{% endif %}
 
-        <label>Designation</label>
-        <input type="text" name="designation" value="{{ staff.designation }}">
-        {% endif %}
+<br><br><hr>
 
-        <button class="btn" type="submit">Save</button>
+    <div class="profile-card">
 
-    </form>
+        <div class="profile-header">
+            <h2>Edit Profile</h2>
+            <p>Update your account information</p>
+        </div>
+
+        
+
+        <form method="POST">
+            <br>
+            <div class="form-group">
+                <label>First Name</label>
+                <input type="text"
+                       name="fname"
+                       value="{{ profile.fname if profile else '' }}"
+                       required>
+            </div>
+            <br>
+
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text"
+                       name="lname"
+                       value="{{ profile.lname if profile else '' }}"
+                       required>
+            </div>
+            <br>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text"
+                       name="phone"
+                       value="{{ profile.phone if profile else '' }}">
+            </div>
+            <br>
+
+            {% if role == 'student' %}
+
+            <label>Course & Year</label>
+
+            <select name="course_year_id">
+
+                {% for item in course_years %}
+                    <option value="{{ item.id }}"
+                    {% if profile.cource == item.course and profile.year == item.year %}
+                        selected
+                    {% endif %}
+                    >
+                        {{ item.course }} - {{ item.year }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            {% elif role == 'teacher' %}
+      
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text"
+                       name="department"
+                       value="{{ profile.department if profile else '' }}">
+            </div>
+
+            {% elif role == 'staff' %}
+            <div class="form-group">
+                <label>Designation</label>
+                <input type="text"
+                       name="designation"
+                       value="{{ profile.designation if profile else '' }}">
+            </div>
+
+            {% endif %}
+            <br>
+            <button type="submit" class="save-btn">
+                Save Changes
+            </button>
+
+        </form>
+
+    </div>
+
 </div>
 
 {% endblock %}

@@ -124,6 +124,9 @@ body{
 .footer-text a:hover{
     text-decoration:underline;
 }
+.error{
+    color:red;
+}
 
 @media(max-width:450px){
     .login-container{
@@ -142,6 +145,16 @@ body{
         <h1>Computer Science Department</h1>
         <p>Student & Faculty Portal</p>
     </div>
+<br>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="error">
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
     <form action="/login" method="POST">
         <select name="role">

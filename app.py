@@ -4,10 +4,9 @@ from flask_login import logout_user, current_user
 
 from datetime import date,datetime
 from functools import wraps
-from flask import abort
+from flask import abort,flash
 from db import db #ORM BASED
 from model import *
-# from model import Student, Teacher, Staff
 
 import os
 from werkzeug.utils import secure_filename
@@ -55,7 +54,7 @@ def load_user(user_id):
     return None
 
 ####################################################################################################################################################
-#LOGIN ALL
+#LOGIN FOR ALL
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
@@ -87,10 +86,12 @@ def login():
 
             if role == "staff":
                 return redirect(url_for("staff"))
+        else:
+            flash("enter valid userid and password")
 
     return render_template("login.html")
 
-#ROLE DETECTER FOR SECURE LOGIN
+#ROLE DETECTER FOR SECURE LOGIN : No each one can access other dashboard
 def role_required(role):
     def wrapper(func):
         @wraps(func)
@@ -113,6 +114,7 @@ def student():
     time=datetime.now().hour
     stud = Student.query.filter_by(email=current_user.email).first()
     return render_template("stud_dash.html",student=stud,time=time)
+
 
 
 @app.route('/teacher-dashboard')
@@ -162,43 +164,42 @@ def dashboard():
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def edit_profile():
-
     user = current_user
-    role = user.role
+    role = user.role  # e.g: "student","teacher","Staff".
 
     student = teacher = staff = None
-    # role = None
+    active_role = None
 
-    # Detect role
+    # 1. Detect role and query using the db.role
     if "student" in role:
-        role = "student"
-        student = Student.query.filter_by(email=role).first()
+        active_role = "student"
+        student = Student.query.filter_by(email=user.email).first() 
 
     elif "teacher" in role:
-        role = "teacher"
-        teacher = Teacher.query.filter_by(email=role).first()
+        active_role = "teacher"
+        teacher = Teacher.query.filter_by(email=user.email).first() 
 
     elif "staff" in role:
-        role = "staff"
-        staff = Staff.query.filter_by(email=role).first()
+        active_role = "staff"
+        staff = Staff.query.filter_by(email=user.email).first() 
 
-    
+    # 2. Handle Form Submission for deff info
     if request.method == "POST":
-
-        if role == "student":
+        if active_role == "student" and student:
+            selected = CourseYear.query.get(request.form["course_year_id"])
             student.fname = request.form["fname"]
             student.lname = request.form["lname"]
             student.phone = request.form["phone"]
-            student.year = request.form["year"]
-            student.cource = request.form["cource"]
+            student.year = selected.year
+            student.cource = selected.course
 
-        elif role == "teacher":
+        elif active_role == "teacher" and teacher:
             teacher.fname = request.form["fname"]
             teacher.lname = request.form["lname"]
             teacher.phone = request.form["phone"]
             teacher.department = request.form["department"]
 
-        elif role == "staff":
+        elif active_role == "staff" and staff:
             staff.fname = request.form["fname"]
             staff.lname = request.form["lname"]
             staff.phone = request.form["phone"]
@@ -207,12 +208,23 @@ def edit_profile():
         db.session.commit()
         return redirect(url_for("edit_profile"))
 
+    # 3. Pass a unified 'profile' object to make HTML clean
+    teacher_subjects = []
+
+    if current_user.role == "teacher":
+        teacher_subjects = Subject.query.filter_by(
+            teacher_id=current_user.id
+        ).all()
+    course_years = CourseYear.query.all()
+    profile_data = student or teacher or staff
+
+
     return render_template(
         "edit_profile.html",
-        student=student,
-        teacher=teacher,
-        staff=staff,
-        role=role
+        profile=profile_data,
+        role=active_role,
+        teacher_subjects=teacher_subjects,
+        course_years=course_years
     )
 
 #This main internel section
@@ -230,12 +242,13 @@ def student_courses():
         student_id=current_user.id
     ).all()
 
-    subjects = []
+    subject_ids = [m.subject_id for m in mappings]
 
-    for m in mappings:
-        subject = Subject.query.get(m.subject_id)
-        if subject:
-            subjects.append(subject)
+    subjects = Subject.query.filter_by(
+        course=current_user.cource,
+        year=current_user.year,
+        academic_year=current_user.academic_year
+    ).all()
 
     return render_template(
         "student_courses.html",
@@ -255,15 +268,20 @@ def student_assignments():
     ).all()
 
     submission_map = {
-        s.assignment_id:s
+        s.assignment_id: s
         for s in submissions
     }
+
+    today = date.today()
 
     return render_template(
         "student_assignments.html",
         assignments=assignments,
-        submission_map=submission_map
+        submission_map=submission_map,
+        today=today
     )
+
+
 
 @app.route(
 "/student/submit-assignment/<int:id>",
@@ -382,7 +400,7 @@ def student_notes():
 @login_required
 @role_required("teacher")
 def teacher_students():
-
+    
     students = Student.query.all()
 
     return render_template(
@@ -396,14 +414,45 @@ def teacher_students():
 @role_required("teacher")
 def teacher_assignments():
 
+    edit_id = request.args.get("edit")
+
+    today = date.today().strftime("%Y-%m-%d")
+
     if request.method == "POST":
+
+        # Update existing assignment
+        if "assignment_id" in request.form:
+
+            assignment = Assignment.query.get(
+                request.form["assignment_id"]
+            )
+
+            selected_date = datetime.strptime(
+                request.form["due_date"],
+                "%Y-%m-%d"
+            ).date()
+
+            assignment.title = request.form["title"]
+            assignment.description = request.form["description"]
+            assignment.subject_id = request.form["subject_id"]
+            assignment.due_date = selected_date
+
+            db.session.commit()
+
+            return redirect(url_for("teacher_assignments"))
+
+        # Add new assignment
+        selected_date = datetime.strptime(
+            request.form["due_date"],
+            "%Y-%m-%d"
+        ).date()
 
         assignment = Assignment(
             title=request.form["title"],
             description=request.form["description"],
             subject_id=request.form["subject_id"],
             teacher_id=current_user.id,
-            due_date=request.form["due_date"]
+            due_date=selected_date
         )
 
         db.session.add(assignment)
@@ -411,13 +460,20 @@ def teacher_assignments():
 
         return redirect(url_for("teacher_assignments"))
 
-    assignments = Assignment.query.all()
-    subjects = Subject.query.all()
+    assignments = Assignment.query.filter_by(
+        teacher_id=current_user.id
+    ).all()
+
+    subjects = Subject.query.filter_by(
+        teacher_id=current_user.id
+    ).all()
 
     return render_template(
         "teacher_assignments.html",
         assignments=assignments,
-        subjects=subjects
+        subjects=subjects,
+        edit_id=edit_id,
+        today=today
     )
 
 @app.route("/teacher/delete-assignment/<int:id>")
@@ -511,7 +567,8 @@ def teacher_notes():
         return redirect(url_for("teacher_notes"))
 
     notes = Notes.query.all()
-    subjects = Subject.query.all()
+    # subjects = Subject.query.all()
+    subjects = Subject.query.filter_by(teacher_id=current_user.id).all()
 
     return render_template(
         "teacher_notes.html",
@@ -532,85 +589,40 @@ def delete_note(id):
     return redirect(url_for("teacher_notes"))
 
 
-@app.route("/teacher/marks", methods=["GET", "POST"])
-@login_required
-@role_required("teacher")
-def teacher_marks():
+# @app.route("/teacher/attendance", methods=["GET", "POST"])
+# @login_required
+# @role_required("teacher")
+# def teacher_attendance():
+#     today = date.today().strftime("%Y-%m-%d")
 
-    if request.method == "POST":
+#     if request.method == "POST":
 
-        result = Result(
-            student_id=request.form["student_id"],
-            subject_id=request.form["subject_id"],
-            teacher_id=current_user.id,
-            marks=request.form["marks"],
-            grade=request.form["grade"],
-            semester=request.form["semester"]
-        )
+#         attendance = Attendance(
+#             student_id=request.form["student_id"],
+#             attendance_date=date.today(),
+#             status=request.form["status"]
+#         )
 
-        db.session.add(result)
-        db.session.commit()
+#         db.session.add(attendance)
+#         db.session.commit()
 
-        return redirect(url_for("teacher_marks"))
+#         return redirect(url_for("teacher_attendance"))
 
-    results = Result.query.all()
+#     attendance = Attendance.query.all()
+#     students = Student.query.all()
 
-    students = Student.query.all()
-    subjects = Subject.query.all()
+#     student_map = {
+#         s.id: f"{s.fname} {s.lname}"
+#         for s in students
+#     }
 
-    student_map = {
-        s.id: f"{s.fname} {s.lname}"
-        for s in students
-    }
-
-    subject_map = {
-        s.id: s.subject_name
-        for s in subjects
-    }
-
-    return render_template(
-        "teacher_marks.html",
-        results=results,
-        students=students,
-        subjects=subjects,
-        student_map=student_map,
-        subject_map=subject_map
-    )
-
-@app.route("/teacher/attendance", methods=["GET", "POST"])
-@login_required
-@role_required("teacher")
-def teacher_attendance():
-    today=date.today()
-
-    if request.method == "POST":
-
-        attendance = Attendance(
-            student_id=request.form["student_id"],
-            attendance_date=request.form["attendance_date"],
-            status=request.form["status"]
-        )
-
-        db.session.add(attendance)
-        db.session.commit()
-
-        return redirect(url_for("teacher_attendance"))
-
-    attendance = Attendance.query.all()
-    students = Student.query.all()
-
-    student_map = {
-        s.id: f"{s.fname} {s.lname}"
-        for s in students
-    }
-
-    return render_template(
-        "teacher_attendance.html",
-        attendance=attendance,
-        students=students,
-        student_map=student_map,
-        today=today
-    )
+#     return render_template(
+#         "teacher_attendance.html",
+#         attendance=attendance,
+#         students=students,
+#         student_map=student_map,
+#         today=today
+#     )
 @app.route("/teacher/notices", methods=["GET", "POST"])
 @login_required
 @role_required("teacher")
@@ -659,6 +671,7 @@ def teacher_delete_notice(id):
 def staff_students():
 
     if request.method == "POST":
+        selected = CourseYear.query.get(request.form["course_year"])
 
         student = Student(
             fname=request.form["fname"],
@@ -666,8 +679,8 @@ def staff_students():
             email=request.form["email"],
             password=request.form["password"],
             phone=request.form["phone"],
-            year=request.form["year"],
-            cource=request.form["cource"],
+            year=selected.year,
+            cource=selected.course,
             role="student"
         )
 
@@ -677,10 +690,12 @@ def staff_students():
         return redirect(url_for("staff_students"))
 
     students = Student.query.all()
+    course_years = CourseYear.query.all()
 
     return render_template(
         "staff_students.html",
-        students=students
+        students=students,
+        course_years=course_years
     )
 
 @app.route("/staff/delete-student/<int:id>")
@@ -710,7 +725,7 @@ def staff_teachers():
             email=request.form["email"],
             password=request.form["password"],
             phone=request.form["phone"],
-            department=request.form["department"],
+            department="Computer ",
             role="teacher"
         )
 
@@ -748,12 +763,19 @@ def delete_teacher(id):
 def staff_courses():
 
     if request.method == "POST":
+        code = request.form["subject_code"]
+        existing = Subject.query.filter_by(
+        subject_code=code).first()
+        if existing:
+            flash("Subject code already exists!")
+            return redirect(url_for("staff_courses"))
+        selected = CourseYear.query.get(request.form["course_year"])
 
         subject = Subject(
             subject_name=request.form["subject_name"],
             subject_code=request.form["subject_code"],
-            course=request.form["course"],
-            year=request.form["year"],
+            course=selected.course,
+            year=selected.year,
             teacher_id=request.form["teacher_id"]
         )
 
@@ -764,6 +786,7 @@ def staff_courses():
 
     subjects = Subject.query.all()
     teachers = Teacher.query.all()
+    course_years = CourseYear.query.all()
 
     teacher_map = {
         t.id: f"{t.fname} {t.lname}"
@@ -774,6 +797,7 @@ def staff_courses():
         "staff_courses.html",
         subjects=subjects,
         teachers=teachers,
+        course_years=course_years,
         teacher_map=teacher_map
     )
 
@@ -854,4 +878,4 @@ def staff_reports():
 ####################################################################################################################################################
 #RUN APP
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(debug=True,port=5001)

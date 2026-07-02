@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}CS Portal{% endblock %}</title>
+<title>{% block title %}Computer Science{% endblock %}</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -52,7 +52,13 @@ color:white;
 border-radius:10px;
 transition:.3s;
 }
-
+.error{
+    background:#ffebee;
+    color:#c62828;
+    padding:10px;
+    border-radius:5px;
+    margin-bottom:10px;
+}
 .sidebar a:hover{
 background:linear-gradient(135deg,#3b82f6,#a855f7);
 transform:translateX(5px);
@@ -132,6 +138,7 @@ margin-top:30px;
 opacity:0.6;
 }
 
+
 </style>
 </head>
 
@@ -153,6 +160,7 @@ opacity:0.6;
 <div class="user">
 </div>
 </div>
+
 
 {% block content %}{% endblock %}
 

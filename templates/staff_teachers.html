@@ -21,7 +21,7 @@ Teachers Records
 
         {% for t in teachers %}
         <tr>
-            <td>{{t.id}}</td>
+            <td>{{loop.index}}</td>
             <td>{{t.fname}} {{t.lname}}</td>
             <td>{{t.email}}</td>
             <td>{{t.department}}</td>
@@ -80,12 +80,7 @@ Teachers Records
                required>
         <br><br>
 
-        <label>Department</label><br>
-        <input type="text"
-               name="department"
-               placeholder="Department"
-               required>
-        <br><br>
+
 
         <button type="submit" class="btn">
             Add Teacher

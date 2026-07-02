@@ -18,17 +18,20 @@ Course Management
     <th>Course</th>
     <th>Year</th>
     <th>Teacher</th>
+    <th>Acadmic Year</th>
     <th>Action</th>
 </tr>
 
 {% for s in subjects %}
 <tr>
-    <td>{{s.id}}</td>
+    <td>{{loop.index}}</td>
+    
     <td>{{s.subject_code}}</td>
     <td>{{s.subject_name}}</td>
     <td>{{s.course}}</td>
     <td>{{s.year}}</td>
     <td>{{ teacher_map.get(s.teacher_id, "Not Assigned") }}</td>
+    <td>{{s.academic_year}}</td>
 
     <td>
         <a class="btn"
@@ -63,20 +66,26 @@ Course Management
            placeholder="DBMS101"
            required>
     <br><br>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="error">
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<label>Course & Year</label><br>
+<select name="course_year" required>
+    <option value="">Select Course & Year</option>
 
-    <label>Course</label><br>
-    <input type="text"
-           name="course"
-           placeholder="MSC"
-           required>
-    <br><br>
-
-    <label>Year</label><br>
-    <input type="text"
-           name="year"
-           placeholder="FY"
-           required>
-    <br><br>
+    {% for item in course_years %}
+        <option value="{{ item.id }}">
+            {{ item.course }} - {{ item.year }}
+        </option>
+    {% endfor %}
+</select>
+<br>
 
 <label>Assign Teacher</label><br>
 
@@ -89,7 +98,7 @@ Course Management
     {% for t in teachers %}
 
     <option value="{{t.id}}">
-        {{t.fname}} {{t.lname}} (ID: {{t.id}})
+        {{t.fname}} {{t.lname}} {{t.email}}
     </option>
 
     {% endfor %}

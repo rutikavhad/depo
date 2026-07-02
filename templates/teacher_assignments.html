@@ -10,32 +10,145 @@ Assignments
 
 <h2>Assignment List</h2>
 
-<table width="100%">
+<table border="1">
+
 <tr>
     <th>ID</th>
     <th>Title</th>
     <th>Description</th>
+    <th>Subject</th>
+    <th>Created Date</th>
     <th>Due Date</th>
     <th>Action</th>
 </tr>
 
 {% for a in assignments %}
+
 <tr>
 
-    <td>{{a.id}}</td>
-    <td>{{a.title}}</td>
-    <td>{{a.description}}</td>
-    <td>{{a.due_date}}</td>
+{% if edit_id == a.id|string %}
 
-    <td>
-        <a class="btn"
-           href="{{ url_for('delete_assignment', id=a.id) }}"
-           onclick="return confirm('Delete Assignment?')">
-           Delete
-        </a>
-    </td>
+<form method="POST">
+
+<input type="hidden"
+       name="assignment_id"
+       value="{{ a.id }}">
+
+<td>
+{{ a.id }}
+</td>
+
+<td>
+
+<input
+type="text"
+name="title"
+value="{{ a.title }}"
+required>
+
+</td>
+
+<td>
+
+<textarea
+name="description"
+rows="3"
+required>{{ a.description }}</textarea>
+
+</td>
+
+<td>
+
+<select name="subject_id" required>
+
+{% for s in subjects %}
+
+<option value="{{ s.id }}"
+{% if s.id == a.subject_id %}
+selected
+{% endif %}>
+
+{{ s.subject_name }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+</td>
+
+<td>
+{{ a.created_date }}
+</td>
+
+<td>
+
+<input
+type="date"
+name="due_date"
+value="{{ a.due_date.strftime('%Y-%m-%d') }}"
+min="{{ today }}"
+required>
+
+</td>
+
+<td>
+
+<button class="btn" type="submit">
+Save
+</button>
+
+<a class="btn"
+href="{{ url_for('teacher_assignments') }}">
+Cancel
+</a>
+
+</td>
+
+</form>
+
+{% else %}
+
+<td>{{ a.id }}</td>
+
+<td>{{ a.title }}</td>
+
+<td>{{ a.description }}</td>
+
+<td>
+
+{% for s in subjects %}
+{% if s.id == a.subject_id %}
+{{ s.subject_name }}
+{% endif %}
+{% endfor %}
+
+</td>
+
+<td>{{ a.created_date }}</td>
+
+<td>{{ a.due_date }}</td>
+
+<td>
+
+<a class="btn"
+href="{{ url_for('teacher_assignments', edit=a.id) }}">
+Edit
+</a>
+
+<a class="btn"
+href="{{ url_for('delete_assignment', id=a.id) }}"
+onclick="return confirm('Delete Assignment?')">
+Delete
+</a>
+
+</td>
+
+{% endif %}
 
 </tr>
+
 {% endfor %}
 
 </table>
@@ -48,51 +161,58 @@ Assignments
 
 <form method="POST">
 
-    <label>Title</label><br>
-    <input type="text"
-           name="title"
-           required>
-    <br><br>
+<label>Title</label><br>
 
-    <label>Description</label><br>
-    <textarea
-        name="description"
-        rows="4"
-        cols="50"
-        required></textarea>
-    <br><br>
+<input
+type="text"
+name="title"
+required>
 
-    <label>Subject</label><br>
+<br><br>
 
-    <select name="subject_id" required>
+<label>Description</label><br>
 
-        <option value="">
-            Select Subject
-        </option>
+<textarea
+name="description"
+rows="4"
+cols="50"
+required></textarea>
 
-        {% for s in subjects %}
+<br><br>
 
-        <option value="{{s.id}}">
-            {{s.subject_name}}
-        </option>
+<label>Subject</label><br>
 
-        {% endfor %}
+<select name="subject_id" required>
 
-    </select>
+<option value="">
+Select Subject
+</option>
 
-    <br><br>
+{% for s in subjects %}
 
-    <label>Due Date</label><br>
+<option value="{{ s.id }}">
+{{ s.subject_name }}
+</option>
 
-    <input type="date"
-           name="due_date"
-           required>
+{% endfor %}
 
-    <br><br>
+</select>
 
-    <button class="btn" type="submit">
-        Add Assignment
-    </button>
+<br><br>
+
+<label>Due Date</label><br>
+
+<input
+type="date"
+name="due_date"
+min="{{ today }}"
+required>
+
+<br><br>
+
+<button class="btn" type="submit">
+Add Assignment
+</button>
 
 </form>
 

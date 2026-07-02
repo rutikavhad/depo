@@ -1,6 +1,8 @@
 from db import db
 from flask_login import UserMixin
 
+from datetime import datetime,date
+
 
 class Student(UserMixin, db.Model):
     __tablename__ = "student"
@@ -14,6 +16,10 @@ class Student(UserMixin, db.Model):
     year=db.Column(db.String(10))
     cource=db.Column(db.String(100))
     role = db.Column(db.String(20))
+    academic_year = db.Column(
+        db.Integer,
+        default=lambda: datetime.now().year
+    )
      
 
     def get_id(self):
@@ -57,9 +63,12 @@ class Subject(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     subject_name = db.Column(db.String(100))
-    subject_code = db.Column(db.String(20))
+    subject_code = db.Column(db.String(20),unique=True,nullable=False)
     course = db.Column(db.String(100))
     year = db.Column(db.String(10))
+    academic_year = db.Column(
+    db.Integer,
+    default=lambda: datetime.now().year)
     teacher_id = db.Column(db.Integer)
 
 
@@ -80,6 +89,7 @@ class Assignment(db.Model):
     subject_id = db.Column(db.Integer)
     teacher_id = db.Column(db.Integer)
     due_date = db.Column(db.Date)
+    created_date = db.Column(db.Date,default=date.today)
 
 
 class Attendance(db.Model):
@@ -88,7 +98,7 @@ class Attendance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer)
     subject_id = db.Column(db.Integer, nullable=True)
-    attendance_date = db.Column(db.Date)
+    attendance_date = db.Column(db.Date,default=date.today)
     status = db.Column(db.String(20))
 
 
@@ -112,6 +122,7 @@ class Notice(db.Model):
     description = db.Column(db.Text)
     created_by = db.Column(db.Integer)
     creator_role = db.Column(db.String(20))
+
 
 
 
@@ -146,5 +157,10 @@ class Notes(db.Model):
     teacher_id = db.Column(db.Integer)
     file_path = db.Column(db.String(300))
 
+class CourseYear(db.Model):
+    __tablename__ = "course_info"
 
+    id = db.Column(db.Integer, primary_key=True)
+    course = db.Column(db.String(50), nullable=False)
+    year = db.Column(db.String(10), nullable=False)
     ###########################

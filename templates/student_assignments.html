@@ -8,66 +8,64 @@ Assignments
 
 <div class="card">
 
-<table width="100%">
+    <h2>Assignments</h2>
 
-<tr>
-<th>Title</th>
-<th>Due Date</th>
-<th>Status</th>
-<th>Marks</th>
-<th>Action</th>
-</tr>
+    <table class="table">
 
-{% for a in assignments %}
+        <tr>
+            <th>Title</th><th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
 
-<tr>
+        {% for assignment in assignments %}
 
-<td>{{a.title}}</td>
+        <tr>
 
-<td>{{a.due_date}}</td>
+            <td>{{ assignment.title }}</td>
 
-{% if a.id in submission_map %}
+            <td>{{ assignment.due_date }}</td>
 
-<td>Submitted</td>
+            {% if assignment.id in submission_map %}
 
-<td>
+                <td>Submitted</td>
 
-{{ submission_map[a.id].marks
-if submission_map[a.id].marks
-else "Pending" }}
+                <td>
+                    <button class="btn" disabled>
+                        Submitted
+                    </button>
+                </td>
 
-</td>
+            {% elif assignment.due_date < today %}
 
-<td>
+                <td>Expired</td>
 
-Submitted
+                <td>
+                    <button class="btn" disabled>
+                        Expired
+                    </button>
+                </td>
 
-</td>
+            {% else %}
 
-{% else %}
+                <td>Not Submitted</td>
 
-<td>Not Submitted</td>
+                <td>
+                    <a
+                        href="{{ url_for('submit_assignment', id=assignment.id) }}"
+                        class="btn">
+                        Submit
+                    </a>
+                </td>
 
-<td>-</td>
+            {% endif %}
 
-<td>
+        </tr>
 
-<a class="btn"
-href="/student/submit-assignment/{{a.id}}">
+        {% endfor %}
 
-Submit
-
-</a>
-
-</td>
-
-{% endif %}
-
-</tr>
-
-{% endfor %}
-
-</table>
+    </table>
 
 </div>
 
